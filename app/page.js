@@ -56,8 +56,9 @@ export default function Home() {
     setSearchResults(inventoryList)
   }
 
+
   const addItem = async (item) => {
-    const docRef = doc(collection(firestore, 'inventory'), item)
+    const docRef = doc(collection(firestore, 'inventory'), item.toLowerCase())
     const docSnap = await getDoc(docRef)
 
     if (docSnap.exists()) {
