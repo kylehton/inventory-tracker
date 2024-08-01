@@ -11,6 +11,7 @@ export default function Home() {
   const [open, setOpen] = useState(false)
   const [itemName, setItemName] = useState('')
   const [searchText, setSearchText] = useState('')
+  const [searchResults, setSearchResults] = useState([])
 
   const searchTextField = (se) => setSearchText(se.target.value)
 
@@ -22,10 +23,18 @@ export default function Home() {
     }
   }
 
+  const handleSearch = (e) => {
+    const searchKeyWord = e.target.value.toLowerCase()
+    setSearchText(searchKeyWord)
+    const filteredKeyWord = inventory.filter(item => item.name.toLowerCase().includes(searchKeyWord))
+    setSearchResults(filteredKeyWord)
+  }
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault()
       addItem(itemName)
+      setItemName('')
       handleClose()
     }
   }
@@ -44,6 +53,7 @@ export default function Home() {
       })
     })
     setInventory(inventoryList)
+    setSearchResults(inventoryList)
   }
 
   const addItem = async (item) => {
@@ -91,12 +101,13 @@ export default function Home() {
     width="100vw" 
     height="100vh" 
     display="flex" 
-    justifyContent="flex-end"
+    justifyContent="flex-start"
     alignItems = "center"
     flexDirection = "column"
-    gap={10}
+    gap={3}
     padding={0}
     margin={0}
+    backgroundColor="#777777"
     >
       <Box
       width="100vw"
@@ -104,10 +115,11 @@ export default function Home() {
       alignItems="center"
       display="flex"
       justifyContent="space-between"
-      backgroundColor="#999999"
-      padding={3}
+      padding={2}
+      paddingLeft={5}
+      paddingRight={5}
       >
-        <Typography fontSize={30}>Pantry Tracker v1.0</Typography>
+        <Typography fontSize={30} color="white">Pantry Tracker v1.0</Typography>
         <Box 
         alignItems="right"
         backgroundColor="white"
@@ -115,14 +127,12 @@ export default function Home() {
         justifyContent="space-between"
         >
 
-          <TextField 
+          <TextField
             placeholder="Search for an item...."
             alignItems="right"
             backgroundColor="white"
             value={searchText}
-            onChange = {(se) => {
-              setSearchText(se.target.value)
-            }}
+            onChange={handleSearch}
             />
           
         </Box>
@@ -141,13 +151,13 @@ export default function Home() {
         width={400}
         bgcolor="white"
         border = "2px solid #000"
-        boxShadow = {24}
+        sx={{ transform: 'translate(-50%,-50%)',
+          boxShadow: 'rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px' }}
         p={4}
         display="flex"
         flexDirection="column"
         gap={3}
-        sx={{
-          transform: 'translate(-50%,-50%)'}}
+        
         >
           <Typography variant="h6">Add Item</Typography>
           <Stack width="100%" direction="row" spacing={2}>
@@ -178,36 +188,49 @@ export default function Home() {
       </Modal>
 
       
-      <Box border='1px solid #333' marginBottom={6}>
+      <Box 
+      borderRadius={5}
+      overflow="hidden"
+      style={{
+      marginBottom: '0px',
+      paddingBottom: '0px',
+      backgroundColor: 'rgba(255, 255, 255, 0.5)'
+      }}
+      >
         <Box 
+        borderTopLeftRadius={5}
+        borderTopRightRadius={5}
         width="950px" 
         height="50px" 
-        bgcolor="#E7DDFF"
         display="flex"
         alignItems="center"
         justifyContent="space-between"
+        backgroundColor="#999"
         padding={5}
-        paddingLeft={7}
-        paddingRight={7}
+        paddingLeft={6}
+        paddingRight={6}
 
         >
-          <Typography variant="h4" color="#333">Inventory Items</Typography>
+          <Typography variant="h4" color="#444444">Inventory Items</Typography>
           <Button variant="contained" onClick={ () => {
         handleOpen()
       }} style={{backgroundColor:"#777777"}}>Add New Item</Button>
         </Box>
       
-      <Stack width="950px" height="300px" spacing={-4} overflow="auto">
+      <Stack width="950px" height="350px" spacing={-6} overflow="auto">
         {
-          inventory.map(({name, quantity}) => (
-            <Box key={name} width="100%" minHeight="150px" display="flex"
+          searchResults.map(({name, quantity}) => (
+            <Box key={name} width="100%" minHeight="130px" display="flex"
              alignItems="center" justifyContent="space-between" bgColor="#f0f0f0"
-            padding={7}
+            padding={6}
+            paddingTop={3}
+            paddingBottom={4}
+
             >
-              <Typography variant="h5" color="#333" textAlign="center" maxWidth="40%" flexGrow={1}>
+              <Typography variant="h5" color="#444" textAlign="left" maxWidth="40%" flexGrow={1}>
                 {name.charAt(0).toUpperCase() + name.slice(1)}
               </Typography>
-              <Typography variant="h5" color="#333" textAlign="center">
+              <Typography variant="h5" color="#444" textAlign="center">
                 {quantity}
               </Typography>
               <Stack direction="row" spacing={2}>
